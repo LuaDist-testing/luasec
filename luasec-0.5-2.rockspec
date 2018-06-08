@@ -1,15 +1,15 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.5-1"
+version = "0.5-2"
 -- LuaDist source
 source = {
-  tag = "0.5-1",
+  tag = "0.5-2",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
 -- source = {
---    url = "git://github.com/brunoos/luasec",
+--    url = "git://github.com/brunoos/luasec.git",
 --    tag = "luasec-0.5"
 -- }
 description = {
