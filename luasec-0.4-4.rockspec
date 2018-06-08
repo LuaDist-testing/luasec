@@ -1,10 +1,10 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.4-3"
+version = "0.4-4"
 -- LuaDist source
 source = {
-  tag = "0.4-3",
+  tag = "0.4-4",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
@@ -22,6 +22,16 @@ dependencies = {
    "lua >= 5.1",
    "luasocket",
 }
+external_dependencies = {
+   platforms = {
+      unix = {
+         OPENSSL = {
+            header = "openssl/ssl.h",
+            library = "ssl",
+         }
+      }
+   },
+}
 build = {
     type = "builtin",
     copy_directories = { "doc", "samples" },
@@ -31,7 +41,9 @@ build = {
                 ssl = {
                     sources = { "src/buffer.c", "src/context.c", "src/io.c",
                         "src/ssl.c", "src/timeout.c", "src/usocket.c" },
-                    libraries = { "ssl", "crypto" }
+                    libraries = { "ssl", "crypto" },
+                    incdirs = { "$(OPENSSL_INCDIR)" },
+                    libdirs = { "$(OPENSSL_LIBDIR)" },
                 }
             },
             install = {
