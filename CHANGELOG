@@ -1,4 +1,9 @@
 --------------------------------------------------------------------------------
+LuaSec 0.7alpha
+---------------
+
+
+--------------------------------------------------------------------------------
 LuaSec 0.6
 ------------
 LuaSec depends  on OpenSSL, and  integrates with LuaSocket to  make it
@@ -109,7 +114,7 @@ LuaSec 0.3
 --------------------------------------------------------------------------------
 LuaSec 0.2.1
 ------------
-- 'key' and 'certificate' configurations become optional. (thanks René Rebe)
+- 'key' and 'certificate' configurations become optional. (thanks RenÃ© Rebe)
 - Add '_VERSION' variable to module.
 
 --------------------------------------------------------------------------------

@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.6-2"
+version = "0.7alpha-1"
 -- LuaDist source
 source = {
-  tag = "0.6-2",
+  tag = "0.7alpha-1",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
 -- source = {
---    url = "git://github.com/brunoos/luasec.git",
---    tag = "luasec-0.6"
+--    url = "https://github.com/brunoos/luasec/archive/luasec-0.7alpha.tar.gz",
+--    dir = "luasec-luasec-0.7alpha"
 -- }
 description = {
    summary = "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket.",
@@ -53,9 +53,6 @@ build = {
          },
          modules = {
             ssl = {
-               defines = {
-                  "WITH_LUASOCKET", "LUASOCKET_DEBUG",
-               },
                incdirs = {
                   "$(OPENSSL_INCDIR)", "src/", "src/luasocket",
                },
@@ -66,6 +63,7 @@ build = {
                   "ssl", "crypto"
                },
                sources = {
+                  "src/config.c", "src/ec.c", 
                   "src/x509.c", "src/context.c", "src/ssl.c", 
                   "src/luasocket/buffer.c", "src/luasocket/io.c",
                   "src/luasocket/timeout.c", "src/luasocket/usocket.c"
@@ -86,7 +84,6 @@ build = {
             ssl = {
                defines = {
                   "WIN32", "NDEBUG", "_WINDOWS", "_USRDLL", "LSEC_EXPORTS", "BUFFER_DEBUG", "LSEC_API=__declspec(dllexport)",
-                  "WITH_LUASOCKET", "LUASOCKET_DEBUG",
                   "LUASEC_INET_NTOP", "WINVER=0x0501", "_WIN32_WINNT=0x0501", "NTDDI_VERSION=0x05010300"
                },
                libdirs = {
@@ -94,32 +91,18 @@ build = {
                   "$(OPENSSL_BINDIR)",
                },
                libraries = {
-                  "libeay32", "ssleay32", "ws2_32"
+                  "libssl32MD", "libcrypto32MD", "ws2_32"
                },
                incdirs = {
                   "$(OPENSSL_INCDIR)", "src/", "src/luasocket"
                },
                sources = {
+                  "src/config.c", "src/ec.c", 
                   "src/x509.c", "src/context.c", "src/ssl.c", 
                   "src/luasocket/buffer.c", "src/luasocket/io.c",
                   "src/luasocket/timeout.c", "src/luasocket/wsocket.c"
                }
             }
-         },
-         patches = {
-            ["luarocks_vs_compiler.patch"] = [[
---- a/src/ssl.c.orig
-+++ b/src/ssl.c
-@@ -844,3 +844,8 @@ LSEC_API int luaopen_ssl_core(lua_State *L)
-
-   return 1;
- }
-+
-+#if defined(_MSC_VER)
-+/* Empty implementation to allow building with LuaRocks and MS compilers */
-+LSEC_API int luaopen_ssl(lua_State *L) { return 0; }
-+#endif
-]]
          }
       }
    }

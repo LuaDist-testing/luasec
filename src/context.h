@@ -2,15 +2,16 @@
 #define LSEC_CONTEXT_H
 
 /*--------------------------------------------------------------------------
- * LuaSec 0.6
- * Copyright (C) 2006-2016 Bruno Silvestre
+ * LuaSec 0.7
+ *
+ * Copyright (C) 2006-2017 Bruno Silvestre
  *
  *--------------------------------------------------------------------------*/
 
 #include <lua.h>
 #include <openssl/ssl.h>
 
-#include "config.h"
+#include "compat.h"
 
 #define LSEC_MODE_INVALID 0
 #define LSEC_MODE_SERVER  1

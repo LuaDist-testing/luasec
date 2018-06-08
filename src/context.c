@@ -1,9 +1,9 @@
 /*--------------------------------------------------------------------------
- * LuaSec 0.6
+ * LuaSec 0.7alpha
  *
- * Copyright (C) 2014-2016 Kim Alvefur, Paul Aurich, Tobias Markmann, 
+ * Copyright (C) 2014-2017 Kim Alvefur, Paul Aurich, Tobias Markmann, 
  *                         Matthew Wild.
- * Copyright (C) 2006-2016 Bruno Silvestre.
+ * Copyright (C) 2006-2017 Bruno Silvestre.
  *
  *--------------------------------------------------------------------------*/
 
@@ -24,7 +24,7 @@
 #include "context.h"
 #include "options.h"
 
-#ifndef OPENSSL_NO_ECDH
+#ifndef OPENSSL_NO_EC
 #include <openssl/ec.h>
 #include "ec.h"
 #endif
@@ -33,10 +33,6 @@
 typedef const SSL_METHOD LSEC_SSL_METHOD;
 #else
 typedef       SSL_METHOD LSEC_SSL_METHOD;
-#endif
-
-#if OPENSSL_VERSION_NUMBER>=0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
-#define SSLv23_method() TLS_method()
 #endif
 
 /*-- Compat - Lua 5.1 --------------------------------------------------------*/
@@ -304,18 +300,6 @@ static int verify_cb(int preverify_ok, X509_STORE_CTX *x509_ctx)
   return (verify & LSEC_VERIFY_CONTINUE ? 1 : preverify_ok);
 }
 
-#ifndef OPENSSL_NO_ECDH
-static EC_KEY *find_ec_key(const char *str)
-{
-  p_ec ptr;
-  for (ptr = curves; ptr->name; ptr++) {
-    if (!strcmp(str, ptr->name))
-      return EC_KEY_new_by_curve_name(ptr->nid);
-  }
-  return NULL;
-}
-#endif
-
 /*------------------------------ Lua Functions -------------------------------*/
 
 /**
@@ -562,27 +546,23 @@ static int set_dhparam(lua_State *L)
   return 0;
 }
 
+#if !defined(OPENSSL_NO_EC)
 /**
  * Set elliptic curve.
  */
-#ifdef OPENSSL_NO_ECDH
-static int set_curve(lua_State *L)
-{
-  lua_pushboolean(L, 0);
-  lua_pushstring(L, "OpenSSL does not support ECDH");
-  return 2;
-}
-#else
 static int set_curve(lua_State *L)
 {
   long ret;
   SSL_CTX *ctx = lsec_checkcontext(L, 1);
   const char *str = luaL_checkstring(L, 2);
-  EC_KEY *key = find_ec_key(str);
+
+  SSL_CTX_set_options(ctx, SSL_OP_SINGLE_ECDH_USE);
+
+  EC_KEY *key = lsec_find_ec_key(L, str);
 
   if (!key) {
     lua_pushboolean(L, 0);
-    lua_pushfstring(L, "elliptic curve %s not supported", str);
+    lua_pushfstring(L, "elliptic curve '%s' not supported", str);
     return 2;
   }
 
@@ -596,6 +576,33 @@ static int set_curve(lua_State *L)
       ERR_reason_error_string(ERR_get_error()));
     return 2;
   }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+#endif
+
+#if !defined(OPENSSL_NO_EC) && (defined(SSL_CTRL_SET_CURVES_LIST) || defined(SSL_CTX_set1_curves_list) || defined(SSL_CTRL_SET_ECDH_AUTO))
+/**
+ * Set elliptic curves list.
+ */
+static int set_curves_list(lua_State *L)
+{
+  SSL_CTX *ctx = lsec_checkcontext(L, 1);
+  const char *str = luaL_checkstring(L, 2);
+
+  SSL_CTX_set_options(ctx, SSL_OP_SINGLE_ECDH_USE);
+
+  if (SSL_CTX_set1_curves_list(ctx, str) != 1) {
+    lua_pushboolean(L, 0);
+    lua_pushfstring(L, "unknown elliptic curve in \"%s\"", str);
+    return 2;
+  }
+
+#ifdef SSL_CTRL_SET_ECDH_AUTO
+  SSL_CTX_set_ecdh_auto(ctx, 1);
+#endif
+
   lua_pushboolean(L, 1);
   return 1;
 }
@@ -613,10 +620,18 @@ static luaL_Reg funcs[] = {
   {"setcipher",    set_cipher},
   {"setdepth",     set_depth},
   {"setdhparam",   set_dhparam},
-  {"setcurve",     set_curve},
   {"setverify",    set_verify},
   {"setoptions",   set_options},
   {"setmode",      set_mode},
+
+#if !defined(OPENSSL_NO_EC)
+  {"setcurve",     set_curve},
+#endif
+
+#if !defined(OPENSSL_NO_EC) && (defined(SSL_CTRL_SET_CURVES_LIST) || defined(SSL_CTX_set1_curves_list) || defined(SSL_CTRL_SET_ECDH_AUTO))
+  {"setcurveslist", set_curves_list},
+#endif
+
   {NULL, NULL}
 };
 
@@ -773,6 +788,8 @@ LSEC_API int luaopen_ssl_context(lua_State *L)
   /* Create __index metamethods for context */
   luaL_newlib(L, meta_index);
   lua_setfield(L, -2, "__index");
+
+  lsec_load_curves(L);
 
   /* Return the module */
   luaL_newlib(L, funcs);
