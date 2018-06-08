@@ -7,7 +7,7 @@ local util   = require("util")
 
 local params = {
    mode = "server",
-   protocol = "sslv23",
+   protocol = "any",
    key = "../certs/serverAkey.pem",
    certificate = "../certs/serverA.pem",
    cafile = "../certs/rootA.pem",
