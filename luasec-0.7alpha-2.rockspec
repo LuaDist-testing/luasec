@@ -1,9 +1,17 @@
-package = "LuaSec"
-version = "0.7alpha-1"
+-- This file was automatically generated for the LuaDist project.
+
+package = "luasec"
+version = "0.7alpha-2"
+-- LuaDist source
 source = {
-   url = "git://github.com/brunoos/luasec.git",
-   tag = "luasec-0.7alpha"
+  tag = "0.7alpha-2",
+  url = "git://github.com/LuaDist-testing/luasec.git"
 }
+-- Original source
+-- source = {
+--    url = "https://github.com/brunoos/luasec/archive/luasec-0.7alpha.tar.gz",
+--    dir = "luasec-luasec-0.7alpha"
+-- }
 description = {
    summary = "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket.",
    detailed = "This version delegates to LuaSocket the TCP connection establishment between the client and server. Then LuaSec uses this connection to start a secure TLS/SSL session.",
@@ -45,6 +53,9 @@ build = {
          },
          modules = {
             ssl = {
+               defines = {
+                  "WITH_LUASOCKET", "LUASOCKET_DEBUG",
+               },
                incdirs = {
                   "$(OPENSSL_INCDIR)", "src/", "src/luasocket",
                },
@@ -76,6 +87,7 @@ build = {
             ssl = {
                defines = {
                   "WIN32", "NDEBUG", "_WINDOWS", "_USRDLL", "LSEC_EXPORTS", "BUFFER_DEBUG", "LSEC_API=__declspec(dllexport)",
+                  "WITH_LUASOCKET", "LUASOCKET_DEBUG",
                   "LUASEC_INET_NTOP", "WINVER=0x0501", "_WIN32_WINNT=0x0501", "NTDDI_VERSION=0x05010300"
                },
                libdirs = {
@@ -83,7 +95,7 @@ build = {
                   "$(OPENSSL_BINDIR)",
                },
                libraries = {
-                  "libeay32", "ssleay32", "ws2_32"
+                  "libssl32MD", "libcrypto32MD", "ws2_32"
                },
                incdirs = {
                   "$(OPENSSL_INCDIR)", "src/", "src/luasocket"
