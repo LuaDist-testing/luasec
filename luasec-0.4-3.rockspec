@@ -1,10 +1,10 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.4-2"
+version = "0.4-3"
 -- LuaDist source
 source = {
-  tag = "0.4-2",
+  tag = "0.4-3",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
@@ -36,7 +36,9 @@ build = {
             },
             install = {
                 lib = { "ssl.so" },
-                lua = { "src/ssl.lua", "src/https.lua" }
+                lua = {
+                    "src/ssl.lua",
+                    ["ssl.https"] = "src/https.lua" }
             }
         },
         windows = {
@@ -52,7 +54,10 @@ build = {
             },
             install = {
                 lib = { "ssl.dll" },
-                lua = { "src/ssl.lua", "src/https.lua" }
+                lua = {
+                   "src/ssl.lua",
+                   ["ssl.https"] = "src/https.lua"
+                }
             }
         }
     }
