@@ -1,22 +1,21 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.4.1-2"
+version = "0.5-1"
 -- LuaDist source
 source = {
-  tag = "0.4.1-2",
+  tag = "0.5-1",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
 -- source = {
---    url = "https://github.com/brunoos/luasec/archive/luasec-0.4.1.tar.gz",
---    md5 = "f6f92d93fb3310aadf2ede5d3e8dea53",
---    dir = "luasec-luasec-0.4.1"
+--    url = "git://github.com/brunoos/luasec",
+--    tag = "luasec-0.5"
 -- }
 description = {
    summary = "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket.",
    detailed = "This version delegates to LuaSocket the TCP connection establishment between the client and server. Then LuaSec uses this connection to start a secure TLS/SSL session.",
-   homepage = "http://luasec.luaforge.net",
+   homepage = "https://github.com/brunoos/luasec/wiki",
    license = "MIT"
 }
 dependencies = {
@@ -34,6 +33,9 @@ external_dependencies = {
 }
 build = {
    type = "builtin",
+   copy_directories = {
+      "samples"
+   },
    platforms = {
       unix = {
          install = {
@@ -47,7 +49,7 @@ build = {
          modules = {
             ssl = {
                incdirs = {
-                  "$(OPENSSL_INCDIR)"
+                  "$(OPENSSL_INCDIR)", "src/", "src/luasocket",
                },
                libdirs = {
                   "$(OPENSSL_LIBDIR)"
@@ -56,7 +58,9 @@ build = {
                   "ssl", "crypto"
                },
                sources = {
-                  "src/buffer.c", "src/context.c", "src/io.c", "src/ssl.c", "src/timeout.c", "src/usocket.c"
+                  "src/x509.c", "src/context.c", "src/ssl.c", 
+                  "src/luasocket/buffer.c", "src/luasocket/io.c",
+                  "src/luasocket/timeout.c", "src/luasocket/usocket.c"
                }
             }
          }
@@ -78,8 +82,13 @@ build = {
                libraries = {
                   "ssl", "crypto"
                },
+               incdirs = {
+                  "src/", "src/luasocket"
+               },
                sources = {
-                  "src/buffer.c", "src/context.c", "src/io.c", "src/ssl.c", "src/timeout.c", "src/wsocket.c"
+                  "src/x509.c", "src/context.c", "src/ssl.c", 
+                  "src/luasocket/buffer.c", "src/luasocket/io.c",
+                  "src/luasocket/timeout.c", "src/luasocket/wsocket.c"
                }
             }
          }
