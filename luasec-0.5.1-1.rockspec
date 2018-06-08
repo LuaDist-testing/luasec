@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.5-2"
+version = "0.5.1-1"
 -- LuaDist source
 source = {
-  tag = "0.5-2",
+  tag = "0.5.1-1",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
 -- source = {
 --    url = "git://github.com/brunoos/luasec.git",
---    tag = "luasec-0.5"
+--    tag = "luasec-0.5.1"
 -- }
 description = {
    summary = "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket.",

@@ -1,9 +1,9 @@
 /*--------------------------------------------------------------------------
- * LuaSec 0.5
+ * LuaSec 0.5.1
  *
- * Copyright (C) 2014 Kim Alvefur, Paul Aurich, Tobias Markmann, 
- *                    Matthew Wild.
- * Copyright (C) 2006-2014 Bruno Silvestre.
+ * Copyright (C) 2014-2015 Kim Alvefur, Paul Aurich, Tobias Markmann, 
+ *                         Matthew Wild.
+ * Copyright (C) 2006-2015 Bruno Silvestre.
  *
  *--------------------------------------------------------------------------*/
 
@@ -33,6 +33,10 @@
 typedef const SSL_METHOD LSEC_SSL_METHOD;
 #else
 typedef       SSL_METHOD LSEC_SSL_METHOD;
+#endif
+
+#if OPENSSL_VERSION_NUMBER>=0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#define SSLv23_method() TLS_method()
 #endif
 
 /*--------------------------- Auxiliary Functions ----------------------------*/
@@ -66,7 +70,9 @@ static int set_option_flag(const char *opt, unsigned long *flag)
 static LSEC_SSL_METHOD* str2method(const char *method)
 {
   if (!strcmp(method, "sslv23"))  return SSLv23_method();
+#ifndef OPENSSL_NO_SSL3
   if (!strcmp(method, "sslv3"))   return SSLv3_method();
+#endif
   if (!strcmp(method, "tlsv1"))   return TLSv1_method();
 #if (OPENSSL_VERSION_NUMBER >= 0x1000100fL)
   if (!strcmp(method, "tlsv1_1")) return TLSv1_1_method();
