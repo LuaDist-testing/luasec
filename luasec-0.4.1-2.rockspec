@@ -1,17 +1,17 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "luasec"
-version = "0.4.1-1"
+version = "0.4.1-2"
 -- LuaDist source
 source = {
-  tag = "0.4.1-1",
+  tag = "0.4.1-2",
   url = "git://github.com/LuaDist-testing/luasec.git"
 }
 -- Original source
 -- source = {
 --    url = "https://github.com/brunoos/luasec/archive/luasec-0.4.1.tar.gz",
 --    md5 = "f6f92d93fb3310aadf2ede5d3e8dea53",
---    dir = "luasec-luasec-0.4.1",
+--    dir = "luasec-luasec-0.4.1"
 -- }
 description = {
    summary = "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket.",
@@ -34,9 +34,6 @@ external_dependencies = {
 }
 build = {
    type = "builtin",
-   copy_directories = {
-      "doc", "samples"
-   },
    platforms = {
       unix = {
          install = {
